@@ -1,28 +1,14 @@
-
 from unittest.mock import patch
 
 import requests_mock
-
 from rest_framework import status
 from rest_framework.test import APITestCase
+from vng_api_common.tests import JWTAuthMixin, reverse
 
-from vng_api_common.tests import (
-    JWTAuthMixin,
-    reverse,
-)
+from zrc.datamodel.tests.factories import ZaakEigenschapFactory, ZaakFactory
 
-from zrc.datamodel.tests.factories import (
-    ZaakEigenschapFactory,
-    ZaakFactory,
-)
-
-
-from ..scopes import (
-    SCOPE_ZAKEN_ALLES_LEZEN,
-    SCOPE_ZAKEN_BIJWERKEN,
-    SCOPE_ZAKEN_CREATE,
-)
 from ...datamodel.models import ZaakEigenschap
+from ..scopes import SCOPE_ZAKEN_ALLES_LEZEN, SCOPE_ZAKEN_BIJWERKEN, SCOPE_ZAKEN_CREATE
 
 ZTC_ROOT = "https://example.com/ztc/api/v1"
 CATALOGUS = f"{ZTC_ROOT}/catalogus/878a3318-5950-4642-8715-189745f91b04"
@@ -87,9 +73,8 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
     def test_zaak_eigenschappen_update(self):
         zaak = ZaakFactory.create(zaaktype=ZAAKTYPE)
         zaakeigenschap = ZaakEigenschapFactory.create(
-            zaak=zaak,
-            eigenschap=EIGENSCHAP,
-            waarde="This is a value")
+            zaak=zaak, eigenschap=EIGENSCHAP, waarde="This is a value"
+        )
 
         zaakeigenschap_url = reverse(
             "zaakeigenschap-detail",
@@ -103,7 +88,7 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
         zaakeigenschap_data = {
             "zaak": f"http://example.com{zaak_url}",
             "eigenschap": zaakeigenschap.eigenschap,
-            "waarde": "This is a changed value"
+            "waarde": "This is a changed value",
         }
 
         response = self.client.put(zaakeigenschap_url, data=zaakeigenschap_data)
@@ -117,9 +102,8 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
     def test_zaak_eigenschappen_partial_update(self):
         zaak = ZaakFactory.create(zaaktype=ZAAKTYPE)
         zaakeigenschap = ZaakEigenschapFactory.create(
-            zaak=zaak,
-            eigenschap=EIGENSCHAP,
-            waarde="This is a value")
+            zaak=zaak, eigenschap=EIGENSCHAP, waarde="This is a value"
+        )
 
         zaakeigenschap_url = reverse(
             "zaakeigenschap-detail",
@@ -133,7 +117,7 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
         zaakeigenschap_data = {
             "zaak": f"http://example.com{zaak_url}",
             "eigenschap": zaakeigenschap.eigenschap,
-            "waarde": "This is a changed value"
+            "waarde": "This is a changed value",
         }
 
         response = self.client.patch(zaakeigenschap_url, data=zaakeigenschap_data)
@@ -147,9 +131,8 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
     def test_cannot_change_eigenschap(self):
         zaak = ZaakFactory.create(zaaktype=ZAAKTYPE)
         zaakeigenschap = ZaakEigenschapFactory.create(
-            zaak=zaak,
-            eigenschap=EIGENSCHAP,
-            waarde="This is a value")
+            zaak=zaak, eigenschap=EIGENSCHAP, waarde="This is a value"
+        )
 
         zaakeigenschap_url = reverse(
             "zaakeigenschap-detail",
@@ -163,7 +146,7 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
         zaakeigenschap_data = {
             "zaak": f"http://example.com{zaak_url}",
             "eigenschap": EIGENSCHAP2,
-            "waarde": "This is a changed value"
+            "waarde": "This is a changed value",
         }
 
         response = self.client.patch(zaakeigenschap_url, data=zaakeigenschap_data)
@@ -175,15 +158,14 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
         self.assertEqual(1, len(invalid_params))
 
         self.assertEqual("eigenschap", invalid_params[0]["name"])
-        self.assertEqual('wijzigen-niet-toegelaten', invalid_params[0]["code"])
+        self.assertEqual("wijzigen-niet-toegelaten", invalid_params[0]["code"])
 
     def test_cannot_change_zaak(self):
         zaak1 = ZaakFactory.create(zaaktype=ZAAKTYPE)
         zaak2 = ZaakFactory.create(zaaktype=ZAAKTYPE)
         zaakeigenschap = ZaakEigenschapFactory.create(
-            zaak=zaak1,
-            eigenschap=EIGENSCHAP,
-            waarde="This is a value")
+            zaak=zaak1, eigenschap=EIGENSCHAP, waarde="This is a value"
+        )
 
         zaakeigenschap_url = reverse(
             "zaakeigenschap-detail",
@@ -197,7 +179,7 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
         zaakeigenschap_data = {
             "zaak": f"http://example.com{zaak2_url}",
             "eigenschap": EIGENSCHAP,
-            "waarde": "This is a changed value"
+            "waarde": "This is a changed value",
         }
 
         response = self.client.patch(zaakeigenschap_url, data=zaakeigenschap_data)
@@ -209,14 +191,13 @@ class ZaakEigenschappenTest(JWTAuthMixin, APITestCase):
         self.assertEqual(1, len(invalid_params))
 
         self.assertIn("zaak", invalid_params[0]["name"])
-        self.assertEqual('wijzigen-niet-toegelaten', invalid_params[0]["code"])
+        self.assertEqual("wijzigen-niet-toegelaten", invalid_params[0]["code"])
 
     def test_delete(self):
         zaak = ZaakFactory.create(zaaktype=ZAAKTYPE)
         zaakeigenschap = ZaakEigenschapFactory.create(
-            zaak=zaak,
-            eigenschap=EIGENSCHAP,
-            waarde="This is a value")
+            zaak=zaak, eigenschap=EIGENSCHAP, waarde="This is a value"
+        )
 
         zaakeigenschap_url = reverse(
             "zaakeigenschap-detail",

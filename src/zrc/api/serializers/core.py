@@ -818,7 +818,7 @@ class ZaakEigenschapSerializer(NestedHyperlinkedModelSerializer):
                     ResourceValidator(
                         "Eigenschap", settings.ZTC_API_SPEC, get_auth=get_auth
                     ),
-                    IsImmutableValidator()
+                    IsImmutableValidator(),
                 ]
             },
             "naam": {"source": "_naam", "read_only": True},
