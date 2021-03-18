@@ -521,8 +521,7 @@ class ZaakEigenschapViewSet(
     NestedViewSetMixin,
     ListFilterByAuthorizationsMixin,
     ClosedZaakMixin,
-    mixins.CreateModelMixin,
-    viewsets.ReadOnlyModelViewSet,
+    viewsets.ModelViewSet,
 ):
     """
     Opvragen en bewerken van ZAAKEIGENSCHAPpen
@@ -546,6 +545,21 @@ class ZaakEigenschapViewSet(
     Een specifieke ZAAKEIGENSCHAP opvragen.
 
     Een specifieke ZAAKEIGENSCHAP opvragen.
+
+    update:
+    Werk een ZAAKEIGENSCHAP in zijn geheel bij.
+
+    **Er wordt gevalideerd op**
+    - Alleen de WAARDE mag gewijzigd worden
+
+    partial_update:
+    Werk een ZAAKEIGENSCHAP deels bij.
+
+    **Er wordt gevalideerd op**
+    - Alleen de WAARDE mag gewijzigd worden
+
+    destroy:
+    Verwijder een ZAAKEIGENSCHAP.
     """
 
     queryset = ZaakEigenschap.objects.all()
@@ -558,6 +572,8 @@ class ZaakEigenschapViewSet(
         "list": SCOPE_ZAKEN_ALLES_LEZEN,
         "retrieve": SCOPE_ZAKEN_ALLES_LEZEN,
         "create": SCOPE_ZAKEN_BIJWERKEN | SCOPE_ZAKEN_GEFORCEERD_BIJWERKEN,
+        "update": SCOPE_ZAKEN_BIJWERKEN | SCOPE_ZAKEN_GEFORCEERD_BIJWERKEN,
+        "partial_update": SCOPE_ZAKEN_BIJWERKEN | SCOPE_ZAKEN_GEFORCEERD_BIJWERKEN,
         "destroy": SCOPE_ZAKEN_BIJWERKEN | SCOPE_ZAKEN_GEFORCEERD_BIJWERKEN,
     }
     parent_retrieve_kwargs = {"zaak_uuid": "uuid"}
