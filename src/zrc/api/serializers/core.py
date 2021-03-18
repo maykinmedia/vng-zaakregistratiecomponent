@@ -812,12 +812,13 @@ class ZaakEigenschapSerializer(NestedHyperlinkedModelSerializer):
         extra_kwargs = {
             "url": {"lookup_field": "uuid"},
             "uuid": {"read_only": True},
-            "zaak": {"lookup_field": "uuid"},
+            "zaak": {"lookup_field": "uuid", "validators": [IsImmutableValidator()]},
             "eigenschap": {
                 "validators": [
                     ResourceValidator(
                         "Eigenschap", settings.ZTC_API_SPEC, get_auth=get_auth
-                    )
+                    ),
+                    IsImmutableValidator()
                 ]
             },
             "naam": {"source": "_naam", "read_only": True},
