@@ -598,6 +598,10 @@ class ZaakEigenschapViewSet(
             raise PermissionDenied
         return super().list(request, *args, **kwargs)
 
+    def initialize_request(self, request, *args, **kwargs):
+        # workaround for drf-nested-viewset injecting the URL kwarg into request.data
+        return super(viewsets.ModelViewSet, self).initialize_request(request, *args, **kwargs)
+
 
 class KlantContactViewSet(
     NotificationCreateMixin,
