@@ -804,6 +804,13 @@ class ZaakInformatieObjectSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ZaakEigenschapSerializer(NestedHyperlinkedModelSerializer):
+    zaak = serializers.HyperlinkedRelatedField(
+        queryset=Zaak.objects.all(),
+        view_name="zaak-detail",
+        lookup_field="uuid",
+        validators=[IsImmutableValidator()],
+    )
+
     parent_lookup_kwargs = {"zaak_uuid": "zaak__uuid"}
 
     class Meta:
@@ -812,12 +819,12 @@ class ZaakEigenschapSerializer(NestedHyperlinkedModelSerializer):
         extra_kwargs = {
             "url": {"lookup_field": "uuid"},
             "uuid": {"read_only": True},
-            "zaak": {"lookup_field": "uuid"},
             "eigenschap": {
                 "validators": [
                     ResourceValidator(
                         "Eigenschap", settings.ZTC_API_SPEC, get_auth=get_auth
-                    )
+                    ),
+                    IsImmutableValidator(),
                 ]
             },
             "naam": {"source": "_naam", "read_only": True},
